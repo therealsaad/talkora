@@ -1,15 +1,12 @@
+const API_BASE =
+  process.env.NEXT_PUBLIC_API_URL ||
+  'https://talkora-s-backend-production.up.railway.app/api/v1'
+
 export async function apiClient<T = any>(
   endpoint: string,
   options: RequestInit = {}
 ): Promise<T> {
   const token = getStoredToken()
-
-  const url =
-    endpoint.startsWith('http')
-      ? endpoint
-      : `https://talkora-s-backend-production.up.railway.app/api/v1${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`
-
-  console.log('🔥 TALKORA API URL:', url)
 
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
@@ -19,6 +16,10 @@ export async function apiClient<T = any>(
   if (token) {
     headers['Authorization'] = `Bearer ${token}`
   }
+
+  const url = endpoint.startsWith('http')
+    ? endpoint
+    : `${API_BASE}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`
 
   const res = await fetch(url, {
     ...options,
